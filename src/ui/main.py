@@ -21,7 +21,7 @@ frame2 = ttk.Frame(frame1)
 
 filename = StringVar()
 
-logo = PhotoImage(file = 'assets/logo.png')
+logo = PhotoImage(file = './assets/logo.gif')
 canvas1 = Canvas(frame1, width=500, height=500, bg='#15738c')
 canvas1.create_image(250, 250, image=logo)
 entry1 = ttk.Entry(frame2, textvariable=filename)
