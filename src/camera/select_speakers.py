@@ -37,8 +37,6 @@ class SelectSpeakers:
         # speakerの設定
         speaker_radians = np.array([0.0, np.deg2rad(60), np.deg2rad(120), np.deg2rad(180), np.deg2rad(270)])
 
-        # 0:macのカメラ
-        # 1:webカメラ
         cap = cv2.VideoCapture(capture_devise_num)
         if not cap.isOpened():
             print("Unable to connect to camera.")
@@ -64,4 +62,5 @@ class SelectSpeakers:
 
             right_volume = setting_volumes(speaker_radians, head.right_ear_vector)
             left_volume = setting_volumes(speaker_radians, head.left_ear_vector)
+
             return [right_volume, left_volume]

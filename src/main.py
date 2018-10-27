@@ -1,4 +1,6 @@
 import copy
+from multiprocessing import Process, Array
+import ctypes
 
 import numpy as np
 import audioop
@@ -54,57 +56,65 @@ def init_select_speaker():
 
     return select_speaker
 
-if __name__ == '__main__':
-    select_speaker = init_select_speaker()
+def play_music(shared_music_l_volumes, shared_music_r_volumes):
     music = Music("./src/audio/wav/stereo.wav")
     src_frames = music.wf.readframes(CHUNK_SIZE)
-    before_frames = None
 
     while src_frames != '':
         # バイト列を取得
         # [L0, R0, L1, R1, L2, R2, ...]
         src_frames = music.wf.readframes(CHUNK_SIZE)
-
         # L, Rに分割
         l_frames = audioop.tomono(src_frames, music.width, 1, 0)
         r_frames = audioop.tomono(src_frames, music.width, 0, 1)
-
-        # 顔認識
-        all_flames = select_speaker.estimate_head_orientation(1)
-        if all_flames is None:
-            if before_frames is None:
-                # TODO: ここを決める
-                l_volumes, r_volumes = np.array([0, 0, 0.7, 0.3, 0]), np.array([0.7, 0.3, 0, 0, 0])
-
-            else:
-                # l_volumes, r_volumes = np.array([0, 0, 0.7, 0.3, 0]), np.array([0.7, 0.3, 0, 0, 0])
-                l_volumes, r_volumes = before_frames[0], before_frames[1]
-        else:
-            l_volumes, r_volumes = np.array([0, 0, 0.7, 0.3, 0]), np.array([0.7, 0.3, 0, 0, 0])
-            # l_frames, r_frames = all_flames[0], all_flames[1]
-        music.volumes = [l_volumes, r_volumes]
-        # print(music.volumes)
-        before_frames = copy.deepcopy(all_flames)
+        music.volumes = [shared_music_l_volumes, shared_music_r_volumes]
+        # music.volumes = [np.array([0, 0, 0.7, 0.3, 0]), np.array([0.7, 0.3, 0, 0, 0])]
         # 顔認識側から受け取る値
+        print("#######################")
+        print(shared_music_l_volumes[0])
+        print(shared_music_l_volumes[1])
+        print(shared_music_l_volumes[2])
+        print(shared_music_l_volumes[3])
+        print(shared_music_l_volumes[4])
+
         six_ch_frames = music.set_6ch_audio(l_frames, r_frames, music.volumes)
         # 6chオーディオをstreamに渡す
         # [FL0, FR0, CT0, BA0, RL0, RR0, ...]
         music.stream.write(six_ch_frames)
 
-    self.stop()
-    # while(True):
-        # all_flames = select_speaker.estimate_head_orientation(1)
-        # if all_flames is None:
-        #     if before_frames is None:
-        #         # TODO: ここを決める
-        #         l_frames, r_frames = np.array([1,0,0,0,0]), np.array([1,0,0,0,0])
-        #     else:
-        #         l_frames, r_frames = before_frames[0], before_frames[1]
-        # else:
-        #     l_frames, r_frames = all_flames[0], all_flames[1]
-        # music.volumes = [l_frames, r_frames]
-        # print(l_frames, r_frames)
-        # before_frames = copy.deepcopy(all_flames)
+    music.stop()
+    return True
+
+def assign_speaker(shared_music_l_volumes, shared_music_r_volumes):
+    select_speaker = init_select_speaker()
+    before_frames = None
+    # 顔認識
+    while(True):
+        all_flames = select_speaker.estimate_head_orientation(1)
+        if all_flames is None:
+            if before_frames is None:
+                # TODO: ここを決める
+                l_volumes, r_volumes = np.array([1, 0, 0, 0, 0]), np.array([0, 0, 0, 1, 0])
+
+            else:
+                l_volumes, r_volumes = before_frames[0], before_frames[1]
+            all_flames = [l_volumes, r_volumes]
+        else:
+            l_volumes, r_volumes = all_flames[0], all_flames[1]
+
+        before_frames = copy.deepcopy(all_flames)
+
+        for i in range(5):
+            shared_music_l_volumes[i], shared_music_r_volumes[i] = l_volumes[i], r_volumes[i]
 
 
+if __name__ == '__main__':
+    l_volumes, r_volumes = np.array([1, 0, 0, 0, 0]), np.array([0, 0, 0, 1, 0])
+    shared_music_l_volumes, shared_music_r_volumes = Array("f", l_volumes), Array("f", r_volumes)
 
+    music_process = Process(target=play_music, args=[shared_music_l_volumes, shared_music_r_volumes])
+    speaker_process = Process(target=assign_speaker, args=[shared_music_l_volumes, shared_music_r_volumes])
+    music_process.start()
+    speaker_process.start()
+    music_process.join()
+    speaker_process.join()
