@@ -1,4 +1,6 @@
+import json
 import numpy as np
+import requests
 
 def require_ears_angle(ear_theta, speaker_radians1, speaker_radians2):
     comp1 = np.abs(ear_theta - speaker_radians1)
@@ -69,3 +71,8 @@ def setting_volumes(speaker_radians, ear_vector):
         speaker_volumes[0] = comp1 / (comp1 + comp2)
         speaker_volumes[4] = comp2 / (comp1 + comp2)
         return speaker_volumes
+
+def post_face_vector(base_url, port, face_vector):
+    url = base_url + port
+    requests.post(url, params=json.dumps({'x': face_vector[0], 'y': face_vector[1], 'z': face_vector[2]}))
+

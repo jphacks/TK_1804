@@ -5,6 +5,7 @@ from imutils import face_utils
 
 from camera.head_vector import HeadVector
 from camera.utils import setting_volumes
+from camera.utils import post_face_vector
 
 class SelectSpeakers:
 
@@ -59,6 +60,7 @@ class SelectSpeakers:
 
             head = HeadVector()
             head.rotate(euler_angle[0, 0], euler_angle[1, 0], euler_angle[2, 0])
+            post_face_vector('http://localhost:', '10001', head.face_vector)
             head.projection()
 
             right_volume = setting_volumes(speaker_radians, head.right_ear_vector)
