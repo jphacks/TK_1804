@@ -57,7 +57,7 @@ def init_select_speaker():
     return select_speaker
 
 def play_music(shared_music_l_volumes, shared_music_r_volumes):
-    music = Music("./src/audio/wav/stereo.wav")
+    music = Music("./src/audio/wav/didnt-know.wav")
     src_frames = music.wf.readframes(CHUNK_SIZE)
 
     while src_frames != '':
@@ -84,7 +84,7 @@ def assign_speaker(shared_music_l_volumes, shared_music_r_volumes):
     before_frames = None
     # 顔認識
     while(True):
-        all_flames = select_speaker.estimate_head_orientation(1)
+        all_flames = select_speaker.estimate_head_orientation(0)
         if all_flames is None:
             if before_frames is None:
                 # TODO: ここを決める
@@ -97,6 +97,7 @@ def assign_speaker(shared_music_l_volumes, shared_music_r_volumes):
             l_volumes, r_volumes = all_flames[0], all_flames[1]
 
         before_frames = copy.deepcopy(all_flames)
+        print(before_frames)
 
         for i in range(5):
             shared_music_l_volumes[i], shared_music_r_volumes[i] = l_volumes[i], r_volumes[i]
