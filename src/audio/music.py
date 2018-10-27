@@ -28,19 +28,6 @@ class Music:
         # [L0, R0, L1, R1, L2, R2, ...]
         src_frames = self.wf.readframes(CHUNK_SIZE)
 
-        # while self.stream.is_active():
-        #     # バイト列を取得
-        #     # [L0, R0, L1, R1, L2, R2, ...]
-        #     src_frames = self.wf.readframes(CHUNK_SIZE)
-
-        #     # L, Rに分割
-        #     l_frames = audioop.tomono(src_frames, self.width, 1, 0)
-        #     r_frames = audioop.tomono(src_frames, self.width, 0, 1)
-
-        #     input = self.stream.read(CHUNK_SIZE)
-        #     six_ch_frames = self.set_6ch_audio(l_frames, r_frames, self.volumes)
-        #     self.stream.write(six_ch_frames)
-
         while src_frames != '':
             # バイト列を取得
             # [L0, R0, L1, R1, L2, R2, ...]
