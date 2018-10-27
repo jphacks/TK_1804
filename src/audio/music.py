@@ -2,13 +2,18 @@ import audioop
 import numpy as np
 import pyaudio
 import wave
+import os.path
 
 CHUNK_SIZE = 1024
 
 class Music:
 
     def __init__(self, path):
-        self.path = path
+        self.path = root + ".wav"
+        root, ext = os.path.splitext(path)
+        if(ext == ".mp3"):
+            sound = pydub.AudioSegment.from_mp3(path)
+            sound.export(self.path, format = "wav")
         self.wf = wave.open(path, 'rb')
         self.width = self.wf.getsampwidth()
         self.pa = pyaudio.PyAudio()
