@@ -82,8 +82,9 @@
 * GUIの作成
 
 #### 特に力を入れた場所
-https://github.com/jphacks/TK_1804/blob/master/src/main.py
-* 顔検出と音声出力の調整を非同期処理によって実現した
+https://github.com/jphacks/TK_1804/blob/master/src/process.py
+
+* 顔検出による耳の角度推定、それに基づく音声出力の調整を非同期処理によって実現した
     
 
 
