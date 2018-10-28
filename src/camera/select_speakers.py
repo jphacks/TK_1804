@@ -60,7 +60,7 @@ class SelectSpeakers:
 
             head.rotate(euler_angle[0, 0], euler_angle[1, 0], euler_angle[2, 0])
             print(euler_angle[0, 0], euler_angle[1, 0], euler_angle[2, 0])
-            post_face_vector('127.0.0.1', 10001, [euler_angle[0, 0], euler_angle[1, 0], euler_angle[2, 0]])
+            #post_face_vector('127.0.0.1', 10001, [euler_angle[0, 0], euler_angle[1, 0], euler_angle[2, 0]])
             head.projection()
 
             right_volume = setting_volumes(speaker_radians, head.right_ear_vector)
