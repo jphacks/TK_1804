@@ -77,6 +77,7 @@
 * 深層学習モデルによる顔・顔の傾きの検知
 * 顔の傾きから耳の位置の検出
 * 耳の位置を元に音声出力の調整
+* GUIの作成
 
 #### 特に力を入れた場所
 https://github.com/jphacks/TK_1804/blob/master/src/main.py
