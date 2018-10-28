@@ -23,15 +23,15 @@ float input_vector_size = 300;
 float projection_vector_size = 400;
 
 void setup() {
-  size(1280, 720, OPENGL);
+  size(700, 1000, OPENGL);
   background(255, 255, 255);
-  pv = new ProjectionVector(100, 0, 0);
+  pv = new ProjectionVector(0, 0, 100);
 
   sp = new Speaker[5];
   for(int i=0; i<sp.length - 1; i++) {
-    sp[i] = new Speaker(60*i, 300);
+    sp[i] = new Speaker(60*i, 180);
   }
-  sp[sp.length-1] = new Speaker(270, 50);
+  sp[sp.length-1] = new Speaker(270, 100);
   
   th = new float[4];
   for(int i=0; i<th.length; i++)
