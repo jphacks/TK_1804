@@ -18,7 +18,7 @@ def pick():
     print(filename.get())
 
 root = Tk()
-root.title('Brain Melts')
+root.title('surroundify')
 frame1 = ttk.Frame(root)
 frame2 = ttk.Frame(frame1)
 
