@@ -70,7 +70,6 @@ def play_music(music_path, shared_music_l_volumes, shared_music_r_volumes):
         l_frames = audioop.tomono(src_frames, music.width, 1, 0)
         r_frames = audioop.tomono(src_frames, music.width, 0, 1)
         music.volumes = [shared_music_l_volumes, shared_music_r_volumes]
-        print(shared_music_l_volumes)
         # 顔認識側から受け取る値
         six_ch_frames = music.set_6ch_audio(l_frames, r_frames, music.volumes)
 

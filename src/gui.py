@@ -1,29 +1,14 @@
+from tkinter import *
+from tkinter import ttk
+from tkinter import messagebox as tkMessageBox
+from tkinter import filedialog as tkFileDialog
 import os
-import copy
-from multiprocessing import Process, Array, Value
-import ctypes
-import numpy as np
-from kivy.app import App
-from kivy.uix.widget import Widget
-from kivy.uix.button import Button
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.textinput import TextInput
-
-from kivy.properties import StringProperty
-
 import subprocess
 
 def play():
-    l_volumes, r_volumes = np.array([1, 0, 0, 0, 0]), np.array([0, 0, 0, 1, 0])
-    shared_music_l_volumes, shared_music_r_volumes = Array("f", l_volumes), Array("f", r_volumes)
-
-    music_process = Process(target=play_music, args=[shared_music_l_volumes, shared_music_r_volumes])
-    speaker_process = Process(target=assign_speaker, args=[shared_music_l_volumes, shared_music_r_volumes])
-    music_process.start()
-    speaker_process.start()
-    print(speaker_process.is_alive())
-    print("p")
-    return "P"
+    args = ["python", "./src/process.py", filename.get()]
+    subprocess.call(args)
+    print('Play %s' % filename.get())
 
 def pick():
     print('pick a file')
@@ -32,32 +17,28 @@ def pick():
     filename.set(tkFileDialog.askopenfilename(filetypes = fTyp, initialdir = iDir))
     print(filename.get())
 
-class TestApp(App):
-    def __init__(self, **kwargs):
-        super(TestApp, self).__init__(**kwargs)
-        self.title = 'greeting'
+root = Tk()
+root.title('Brain Melts')
+frame1 = ttk.Frame(root)
+frame2 = ttk.Frame(frame1)
 
-    def buttonClicked(self, instance):
-        args = ["python", "./src/process.py", self.text]
-        subprocess.call(args)
-        return "ddd"
+filename = StringVar()
 
-    def on_enter(self, ti):
-        self.text = ti.text
+logo = PhotoImage(file = './src/assets/logo.gif')
+canvas1 = Canvas(frame1, width=500, height=500, bg='#15738c')
+canvas1.create_image(250, 250, image=logo)
+entry1 = ttk.Entry(frame2, textvariable=filename)
+button1 = ttk.Button(frame2, text='pick a wav file', command=pick)
+button2 = ttk.Button(frame2, text='play', command=play)
 
-    def build(self):
-        self.text = './src/audio/wav/didnt-know.wav'
-        boxLayout = BoxLayout(spacing=10,orientation='vertical')
-        ti = TextInput(text=self.text, multiline=False)
-        ti.bind(on_text_validate=self.on_enter)
-        boxLayout.add_widget(ti)
-        button = Button(text='Play')
-        button.bind(on_press=self.buttonClicked)
-        boxLayout.add_widget(button)
-        return boxLayout
+frame1.grid(row=0, column=0, sticky=(N,E,S,W))
+canvas1.grid(row=1, column=1, sticky=E)
+frame2.grid(row=1, column=2, sticky=W)
+entry1.grid(row=1, column=1, sticky=E)
+button1.grid(row=1, column=2, sticky=W)
+button2.grid(row=2, column=1, sticky=S)
 
-def app():
-    TestApp().run()
+for child in frame1.winfo_children():
+    child.grid_configure(padx=5, pady=5)
 
-if __name__ == '__main__':
-    app()
+root.mainloop()
