@@ -1,12 +1,17 @@
 import cv2
 import numpy as np
+import copy as cp
+from camera.utils import get_diff_theta
 
 class HeadVector:
 
     def __init__(self):
         self.face_vector = np.array([0, 0, 1])
+        self.current_face_vector = np.array([0, 1])
+        self.before_face_vector = np.array([0, 1])
         self.right_ear_vector = np.array([1, 0, 0])
         self.left_ear_vector = np.array([-1, 0, 0])
+        self.threthold = np.deg2rad(5)
 
 
     def rotate(self, change_angel_x, change_angel_y, change_angel_z):
@@ -28,6 +33,15 @@ class HeadVector:
 
     def projection(self):
         parametor = np.sqrt((1 - self.face_vector[1]/self.vector_size()) ** 2)
-        self.face_vector = np.array([self.face_vector[0], self.face_vector[2]]) * parametor
-        self.right_ear_vector = np.array([self.face_vector[1], -1 * self.face_vector[0]])
-        self.left_ear_vector = np.array([-1 * self.face_vector[1], self.face_vector[0]])
+        self.current_face_vector = np.array([self.face_vector[0], self.face_vector[2]]) * parametor
+        theta = get_diff_theta(self.before_face_vector, self.current_face_vector)
+        if np.abs(theta) >= self.threthold:
+            theta = self.threthold
+            if self.before_face_vector[0] < self.current_face_vector[0]:
+                theta *= -1
+            self.current_face_vector[0] = self.before_face_vector[0] * np.cos(theta) - self.before_face_vector[1] * np.sin(theta)
+            self.current_face_vector[1] = self.before_face_vector[0] * np.sin(theta) + self.before_face_vector[1] * np.cos(theta)
+        self.before_face_vector = cp.deepcopy(self.current_face_vector)
+        
+        self.right_ear_vector = np.array([self.current_face_vector[1], -1 * self.current_face_vector[0]])
+        self.left_ear_vector = np.array([-1 * self.current_face_vector[1], self.current_face_vector[0]])

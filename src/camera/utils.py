@@ -1,4 +1,6 @@
+import json
 import numpy as np
+import socket
 
 def require_ears_angle(ear_theta, speaker_radians1, speaker_radians2):
     comp1 = np.abs(ear_theta - speaker_radians1)
@@ -17,7 +19,7 @@ def setting_volumes(speaker_radians, ear_vector):
     if ear_vector[1] < 0:
         ear_theta = 2 * np.pi - ear_theta
 
-    if ear_theta == 0.0:
+    if ear_theta % np.deg2rad(360) == 0.0:
         speaker_volumes[4] = 1.0
         return speaker_volumes
 
@@ -69,3 +71,14 @@ def setting_volumes(speaker_radians, ear_vector):
         speaker_volumes[0] = comp1 / (comp1 + comp2)
         speaker_volumes[4] = comp2 / (comp1 + comp2)
         return speaker_volumes
+
+def post_face_vector(host, port, face_vector):
+    socket_client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    socket_client.connect((host, port))
+    socket_client.send(json.dumps({'x': face_vector[0], 'y': face_vector[1], 'z': face_vector[2]}).encode('utf-8'))
+
+def get_diff_theta(before_vector, after_vector):
+    theta = np.arccos((np.dot(before_vector, after_vector)) / (np.linalg.norm(before_vector) * np.linalg.norm(after_vector)))
+    if np.cross(before_vector, after_vector) >= 0:
+        theta *= -1
+    return theta

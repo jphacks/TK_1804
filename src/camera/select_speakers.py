@@ -5,6 +5,7 @@ from imutils import face_utils
 
 from camera.head_vector import HeadVector
 from camera.utils import setting_volumes
+from camera.utils import post_face_vector
 
 class SelectSpeakers:
 
@@ -33,7 +34,7 @@ class SelectSpeakers:
 
         return reprojectdst, euler_angle
 
-    def estimate_head_orientation(self, capture_devise_num):
+    def estimate_head_orientation(self, capture_devise_num, head):
         # speakerの設定
         speaker_radians = np.array([0.0, np.deg2rad(60), np.deg2rad(120), np.deg2rad(180), np.deg2rad(270)])
 
@@ -57,8 +58,9 @@ class SelectSpeakers:
 
             _, euler_angle = self.get_head_pose(shape)
 
-            head = HeadVector()
             head.rotate(euler_angle[0, 0], euler_angle[1, 0], euler_angle[2, 0])
+            print(euler_angle[0, 0], euler_angle[1, 0], euler_angle[2, 0])
+            #post_face_vector('127.0.0.1', 10001, [euler_angle[0, 0], euler_angle[1, 0], euler_angle[2, 0]])
             head.projection()
 
             right_volume = setting_volumes(speaker_radians, head.right_ear_vector)
