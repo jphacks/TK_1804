@@ -1,6 +1,6 @@
 # ドーム型枕 surroundify
 
-![surroundify](https://user-images.githubusercontent.com/25478176/47611089-dfd99000-daa0-11e8-803d-663fe25bb7fc.png)
+![surroundify](https://user-images.githubusercontent.com/20007063/47612449-022dd680-dabe-11e8-81ea-9b40fbb946c7.png)
 
 [![Product Name](image.png)](https://youtu.be/VOJKW3B3wu8)
 
