@@ -2,7 +2,7 @@
 
 ![surroundify](https://user-images.githubusercontent.com/25478176/47611089-dfd99000-daa0-11e8-803d-663fe25bb7fc.png)
 
-[![Product Name](image.png)](https://www.youtube.com/watch?v=G5rULR53uMk)
+[![Product Name](image.png)](https://youtu.be/VOJKW3B3wu8)
 
 ## 製品概要
 ### 安眠 × Tech
