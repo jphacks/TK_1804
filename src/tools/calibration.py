@@ -41,7 +41,7 @@ while True:
             imgpoints.append(corners2)
 
             # Draw and display the corners
-            img = cv2.drawChessboardCorners(img, (7,6), corners2,ret)
+            img = cv2.drawChessboardCorners(img, (8,8), corners2,ret)
             cv2.imshow('Image',img)
             cv2.waitKey(500)
 
