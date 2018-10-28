@@ -32,7 +32,6 @@ class Music:
             # バイト列を取得
             # [L0, R0, L1, R1, L2, R2, ...]
             src_frames = self.wf.readframes(CHUNK_SIZE)
-
             # L, Rに分割
             l_frames = audioop.tomono(src_frames, self.width, 1, 0)
             r_frames = audioop.tomono(src_frames, self.width, 0, 1)

@@ -3,8 +3,11 @@ from tkinter import ttk
 from tkinter import messagebox as tkMessageBox
 from tkinter import filedialog as tkFileDialog
 import os
+import subprocess
 
 def play():
+    args = ["python", "./src/process.py", filename.get()]
+    subprocess.call(args)
     print('Play %s' % filename.get())
 
 def pick():
@@ -21,7 +24,7 @@ frame2 = ttk.Frame(frame1)
 
 filename = StringVar()
 
-logo = PhotoImage(file = './src/ui/assets/logo.gif')
+logo = PhotoImage(file = './src/assets/logo.gif')
 canvas1 = Canvas(frame1, width=500, height=500, bg='#15738c')
 canvas1.create_image(250, 250, image=logo)
 entry1 = ttk.Entry(frame2, textvariable=filename)
