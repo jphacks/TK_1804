@@ -73,9 +73,12 @@ def setting_volumes(speaker_radians, ear_vector):
         return speaker_volumes
 
 def post_face_vector(host, port, face_vector):
-    socket_client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    socket_client.connect((host, port))
-    socket_client.send(json.dumps({'x': face_vector[0], 'y': face_vector[1], 'z': face_vector[2]}).encode('utf-8'))
+    try:
+        socket_client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        socket_client.connect((host, port))
+        socket_client.send(json.dumps({'x': face_vector[0], 'y': face_vector[1], 'z': face_vector[2]}).encode('utf-8'))
+    except IOError:
+        print('IOError: processing not connecting.')
 
 def get_diff_theta(before_vector, after_vector):
     theta = np.arccos((np.dot(before_vector, after_vector)) / (np.linalg.norm(before_vector) * np.linalg.norm(after_vector)))
