@@ -85,9 +85,9 @@ def assign_speaker(shared_music_l_volumes, shared_music_r_volumes):
     select_speaker = init_select_speaker()
     before_frames = None
     # 顔認識
+    head = HeadVector()
     while(True):
-        # TODO
-        all_flames = None
+        all_flames = select_speaker.estimate_head_orientation(0, head)
         if all_flames is None:
             if before_frames is None:
                 # TODO: ここを決める
