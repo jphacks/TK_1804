@@ -20,7 +20,7 @@ def setting_volumes(speaker_radians, ear_vector):
         ear_theta = 2 * np.pi - ear_theta
 
     if ear_theta % np.deg2rad(360) == 0.0:
-        speaker_volumes[4] = 1.0
+        speaker_volumes[0] = 1.0
         return speaker_volumes
 
     elif speaker_radians[0] < ear_theta and ear_theta < speaker_radians[1]:
