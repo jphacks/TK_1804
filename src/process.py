@@ -77,7 +77,6 @@ def play_music(music_path, shared_music_l_volumes, shared_music_r_volumes):
         music.stream.write(six_ch_frames)
 
     music.stop()
-    return "True"
 
 def assign_speaker(shared_music_l_volumes, shared_music_r_volumes):
     print("Run assign_speaker")
