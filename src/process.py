@@ -23,8 +23,6 @@ def init_select_speaker():
         0.0, 0.0, 1.0]
 
     D = [-6.480026610793842012e-01,4.518886105418712940e-01,2.383686615865462672e-03,5.527650471881409219e-03,-1.457046727587593127e-01]
-    cam_matrix = np.array(K).reshape(3, 3).astype(np.float32)
-    dist_coeffs = np.array(D).reshape(5, 1).astype(np.float32)
 
     object_pts = np.float32([[6.825897, 6.760612, 4.402142],
                             [1.330353, 7.122144, 6.903745],
@@ -95,9 +93,10 @@ def assign_speaker(shared_music_l_volumes, shared_music_r_volumes, direction):
             if all_flames is not None:
                 l_volumes, r_volumes = all_flames[0], all_flames[1]
 
-            before_frames = copy.deepcopy(all_flames)
         elif direction.value == -1:
             l_volumes, r_volumes = np.array([0, 0, 0, 0, 0]), np.array([0, 0, 0, 0, 0])
+        elif direction.value == 9:
+            l_volumes, r_volumes = np.array([1, 1, 1, 1, 1]), np.array([1, 1, 1, 1, 1])
         elif direction.value == 1:
             l_volumes, r_volumes = np.array([0, 0, 0, 0, 1]), np.array([0, 0.5, 0.5, 0, 0])
         elif direction.value == 2:
@@ -105,7 +104,7 @@ def assign_speaker(shared_music_l_volumes, shared_music_r_volumes, direction):
         elif direction.value == 3:
             l_volumes, r_volumes = np.array([1, 0, 0, 0, 0]), np.array([0, 0, 0, 1, 0])
         elif direction.value == 4:
-            l_volumes, r_volumes = np.array([0.25, 0.75, 0, 0, 0]), np.array([0, 0, 0, 0.5, 0.6])
+            l_volumes, r_volumes = np.array([0.25, 0.75, 0, 0, 0]), np.array([0, 0, 0, 0.5, 0.5])
         elif direction.value == 5:
             l_volumes, r_volumes = np.array([0, 0.5, 0.5, 0, 0]), np.array([0, 0, 0, 0, 1])
 
@@ -133,6 +132,8 @@ def start(music_path):
             direction.value = -1
         elif kb == 's':
             direction.value = 0
+        elif kb == 'a':
+            direction.value = 9
         elif kb == '1':
             direction.value = 1
         elif kb == '2':
