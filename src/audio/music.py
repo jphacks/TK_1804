@@ -9,7 +9,7 @@ CHUNK_SIZE = 1024
 class Music:
 
     def __init__(self):
-        self.width = 16
+        self.width = 2
         self.pa = pyaudio.PyAudio()
         self.stream_in = self.pa.open(format = self.pa.get_format_from_width(self.width),
                                       channels = 2,
