@@ -7,6 +7,8 @@ import audioop
 import cv2
 import readchar
 
+from camera.head_degree import HeadDegree
+
 from audio.music import Music
 from camera.head_vector import HeadVector
 from camera.select_speakers import SelectSpeakers
@@ -83,22 +85,14 @@ def play_music(music_path, shared_music_l_volumes, shared_music_r_volumes):
 def assign_speaker(shared_music_l_volumes, shared_music_r_volumes, direction):
     print("Run assign_speaker")
     select_speaker = init_select_speaker()
-    before_frames = None
     # 顔認識
     head = HeadVector()
+    head_degree = HeadDegree()
     while(True):
         # デバックモード
         if direction.value == 0:
-            all_flames, video_frames = select_speaker.estimate_head_orientation(1, head)
-            if all_flames is None:
-                if before_frames is None:
-                    # TODO: ここを決める
-                    l_volumes, r_volumes = np.array([1, 0, 0, 0, 0]), np.array([0, 0, 0, 1, 0])
-
-                else:
-                    l_volumes, r_volumes = before_frames[0], before_frames[1]
-                all_flames = [l_volumes, r_volumes]
-            else:
+            all_flames, video_frames = select_speaker.estimate_head_orientation(1, head, head_degree)
+            if all_flames is not None:
                 l_volumes, r_volumes = all_flames[0], all_flames[1]
 
             before_frames = copy.deepcopy(all_flames)
