@@ -37,7 +37,6 @@ class SelectSpeakers:
     def estimate_head_orientation(self, capture_devise_num, head):
         # speakerの設定
         speaker_radians = np.array([0.0, np.deg2rad(60), np.deg2rad(120), np.deg2rad(180), np.deg2rad(270)])
-
         cap = cv2.VideoCapture(capture_devise_num)
         if not cap.isOpened():
             print("Unable to connect to camera.")
@@ -49,7 +48,7 @@ class SelectSpeakers:
             return None
         ret, frame = cap.read()
         if not ret:
-            return None
+            return None, frame
         frame = cv2.flip(frame, -1)
         head_rects = detector(frame, 0)
         if len(head_rects) > 0:
@@ -57,6 +56,15 @@ class SelectSpeakers:
             shape = face_utils.shape_to_np(shape)
 
             _, euler_angle = self.get_head_pose(shape)
+
+            for (x, y) in shape:
+                    cv2.circle(frame, (x, y), 1, (0, 0, 255), -1)
+            cv2.putText(frame, "X: " + "{:7.2f}".format(euler_angle[0, 0]), (20, 20), cv2.FONT_HERSHEY_SIMPLEX,
+                        0.75, (0, 0, 255), thickness=2)
+            cv2.putText(frame, "Y: " + "{:7.2f}".format(euler_angle[1, 0]), (20, 50), cv2.FONT_HERSHEY_SIMPLEX,
+                        0.75, (0, 0, 255), thickness=2)
+            cv2.putText(frame, "Z: " + "{:7.2f}".format(euler_angle[2, 0]), (20, 80), cv2.FONT_HERSHEY_SIMPLEX,
+                        0.75, (0, 0, 255), thickness=2)
 
             head.rotate(euler_angle[0, 0], euler_angle[1, 0], euler_angle[2, 0])
             print(euler_angle[0, 0], euler_angle[1, 0], euler_angle[2, 0])
@@ -66,4 +74,6 @@ class SelectSpeakers:
             right_volume = setting_volumes(speaker_radians, head.right_ear_vector)
             left_volume = setting_volumes(speaker_radians, head.left_ear_vector)
 
-            return [right_volume, left_volume]
+            return ([right_volume, left_volume], frame)
+        else:
+            return(None, frame)
