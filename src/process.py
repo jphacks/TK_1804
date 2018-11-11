@@ -1,9 +1,11 @@
 import copy
-from multiprocessing import Process, Array
+from multiprocessing import Process, Array, Value
 import ctypes
 import sys
 import numpy as np
 import audioop
+import cv2
+import readchar
 
 from audio.music import Music
 from camera.head_vector import HeadVector
@@ -78,26 +80,30 @@ def play_music(music_path, shared_music_l_volumes, shared_music_r_volumes):
 
     music.stop()
 
-def assign_speaker(shared_music_l_volumes, shared_music_r_volumes):
+def assign_speaker(shared_music_l_volumes, shared_music_r_volumes, direction):
     print("Run assign_speaker")
     select_speaker = init_select_speaker()
     before_frames = None
     # 顔認識
     head = HeadVector()
     while(True):
-        all_flames = select_speaker.estimate_head_orientation(0, head)
-        if all_flames is None:
-            if before_frames is None:
-                # TODO: ここを決める
-                l_volumes, r_volumes = np.array([1, 0, 0, 0, 0]), np.array([0, 0, 0, 1, 0])
+        # デバックモード
+        if direction.value == 0:
+            all_flames = select_speaker.estimate_head_orientation(0, head)
+            if all_flames is None:
+                if before_frames is None:
+                    # TODO: ここを決める
+                    l_volumes, r_volumes = np.array([1, 0, 0, 0, 0]), np.array([0, 0, 0, 1, 0])
 
+                else:
+                    l_volumes, r_volumes = before_frames[0], before_frames[1]
+                all_flames = [l_volumes, r_volumes]
             else:
-                l_volumes, r_volumes = before_frames[0], before_frames[1]
-            all_flames = [l_volumes, r_volumes]
-        else:
-            l_volumes, r_volumes = all_flames[0], all_flames[1]
+                l_volumes, r_volumes = all_flames[0], all_flames[1]
 
-        before_frames = copy.deepcopy(all_flames)
+            before_frames = copy.deepcopy(all_flames)
+        elif direction.value == 1:
+            l_volumes, r_volumes = np.array([0, 0, 0, 0, 0]), np.array([0, 0, 0, 0, 0])
 
         for i in range(5):
             shared_music_l_volumes[i], shared_music_r_volumes[i] = l_volumes[i], r_volumes[i]
@@ -105,13 +111,18 @@ def assign_speaker(shared_music_l_volumes, shared_music_r_volumes):
 def start(music_path):
     l_volumes, r_volumes = np.array([1, 0, 0, 0, 0]), np.array([0, 0, 0, 1, 0])
     shared_music_l_volumes, shared_music_r_volumes = Array("f", l_volumes), Array("f", r_volumes)
+    # デバックモード
+    direction = Value('i', 0)
 
     music_process = Process(target=play_music, args=[music_path, shared_music_l_volumes, shared_music_r_volumes])
-    speaker_process = Process(target=assign_speaker, args=[shared_music_l_volumes, shared_music_r_volumes])
+    speaker_process = Process(target=assign_speaker, args=[shared_music_l_volumes, shared_music_r_volumes, direction])
     music_process.start()
     speaker_process.start()
-    # music_process.join()
-    # speaker_process.join()
+
+    while(True):
+        kb = readchar.readchar()
+        if kb == 'q':
+            direction.value = 1
 
 if __name__ == '__main__':
     args = sys.argv
