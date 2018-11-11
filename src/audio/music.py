@@ -9,8 +9,8 @@ CHUNK_SIZE = 1024
 class Music:
 
     def __init__(self, path):
-        self.path = root + ".wav"
         root, ext = os.path.splitext(path)
+        self.path = root + ".wav"
         if(ext == ".mp3"):
             sound = pydub.AudioSegment.from_mp3(path)
             sound.export(self.path, format = "wav")
