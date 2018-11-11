@@ -89,7 +89,7 @@ def assign_speaker(shared_music_l_volumes, shared_music_r_volumes, direction):
     while(True):
         # デバックモード
         if direction.value == 0:
-            all_flames = select_speaker.estimate_head_orientation(0, head)
+            all_flames, video_frames = select_speaker.estimate_head_orientation(0, head)
             if all_flames is None:
                 if before_frames is None:
                     # TODO: ここを決める
@@ -118,6 +118,8 @@ def assign_speaker(shared_music_l_volumes, shared_music_r_volumes, direction):
 
         for i in range(5):
             shared_music_l_volumes[i], shared_music_r_volumes[i] = l_volumes[i], r_volumes[i]
+        cv2.imshow("demo", video_frames)
+        cv2.waitKey(1)
 
 def start(music_path):
     l_volumes, r_volumes = np.array([1, 0, 0, 0, 0]), np.array([0, 0, 0, 1, 0])

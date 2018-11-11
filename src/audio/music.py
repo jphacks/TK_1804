@@ -18,7 +18,7 @@ class Music:
         self.width = self.wf.getsampwidth()
         self.pa = pyaudio.PyAudio()
         self.stream = self.pa.open(format = self.pa.get_format_from_width(self.width),
-                                   channels = 6,
+                                   channels = 2,
                                    rate = self.wf.getframerate(),
                                    output = True)
         self.volumes = [[0, 0, 0.3, 0.7, 0], [0.7, 0.3, 0, 0, 0]]
