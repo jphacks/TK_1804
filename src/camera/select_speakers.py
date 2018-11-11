@@ -49,7 +49,7 @@ class SelectSpeakers:
             return None
         ret, frame = cap.read()
         if not ret:
-            return None
+            return [head_degree.before_volume_r, head_degree.before_volume_l]
         frame = cv2.flip(frame, -1)
         head_rects = detector(frame, 0)
         if len(head_rects) > 0:
@@ -67,6 +67,8 @@ class SelectSpeakers:
             left_volume = setting_volumes(speaker_radians, head.left_ear_vector)
 
             head_degree.before_degree = euler_angle[1, 0]
+            head_degree.before_volume_r = right_volume
+            head_degree.before_volume_l = left_volume
 
             return [right_volume, left_volume]
         else:

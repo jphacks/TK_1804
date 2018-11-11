@@ -80,26 +80,17 @@ def play_music(music_path, shared_music_l_volumes, shared_music_r_volumes):
 
     music.stop()
 
-def assign_speaker(shared_music_l_volumes, shared_music_r_volumes, head_degree):
+def assign_speaker(shared_music_l_volumes, shared_music_r_volumes):
     print("Run assign_speaker")
     select_speaker = init_select_speaker()
-    before_frames = None
     # 顔認識
     head = HeadVector()
+    head_degree = HeadDegree()
     while(True):
-        all_flames = select_speaker.estimate_head_orientation(0, head, head_degree)
-        if all_flames is None:
-            if before_frames is None:
-                # TODO: ここを決める
-                l_volumes, r_volumes = np.array([1, 0, 0, 0, 0]), np.array([0, 0, 0, 1, 0])
-
-            else:
-                l_volumes, r_volumes = before_frames[0], before_frames[1]
-            all_flames = [l_volumes, r_volumes]
-        else:
-            l_volumes, r_volumes = all_flames[0], all_flames[1]
-
-        before_frames = copy.deepcopy(all_flames)
+        all_flames = select_speaker.estimate_head_orientation(1, head, head_degree)
+        print("cc")
+        if all_flames is not None:
+            r_volumes, l_volumes = all_flames[0], all_flames[1]
 
         for i in range(5):
             shared_music_l_volumes[i], shared_music_r_volumes[i] = l_volumes[i], r_volumes[i]
@@ -107,10 +98,9 @@ def assign_speaker(shared_music_l_volumes, shared_music_r_volumes, head_degree):
 def start(music_path):
     l_volumes, r_volumes = np.array([1, 0, 0, 0, 0]), np.array([0, 0, 0, 1, 0])
     shared_music_l_volumes, shared_music_r_volumes = Array("f", l_volumes), Array("f", r_volumes)
-    head_degree = HeadDegree()
 
     music_process = Process(target=play_music, args=[music_path, shared_music_l_volumes, shared_music_r_volumes])
-    speaker_process = Process(target=assign_speaker, args=[shared_music_l_volumes, shared_music_r_volumes, head_degree])
+    speaker_process = Process(target=assign_speaker, args=[shared_music_l_volumes, shared_music_r_volumes])
     music_process.start()
     speaker_process.start()
     # music_process.join()
