@@ -49,10 +49,10 @@ class SelectSpeakers:
         ret, frame = cap.read()
         if not ret:
             return None, frame
-        flip_frame = cv2.flip(frame, -1)
+        frame = cv2.flip(frame, -1)
         head_rects = detector(frame, 0)
         if len(head_rects) > 0:
-            shape = predictor(flip_frame, head_rects[0])
+            shape = predictor(frame, head_rects[0])
             shape = face_utils.shape_to_np(shape)
 
             _, euler_angle = self.get_head_pose(shape)
