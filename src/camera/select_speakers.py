@@ -34,7 +34,7 @@ class SelectSpeakers:
 
         return reprojectdst, euler_angle
 
-    def estimate_head_orientation(self, capture_devise_num, head):
+    def estimate_head_orientation(self, capture_devise_num, head, head_degree):
         # speakerの設定
         speaker_radians = np.array([0.0, np.deg2rad(60), np.deg2rad(120), np.deg2rad(180), np.deg2rad(270)])
 
@@ -66,4 +66,9 @@ class SelectSpeakers:
             right_volume = setting_volumes(speaker_radians, head.right_ear_vector)
             left_volume = setting_volumes(speaker_radians, head.left_ear_vector)
 
+            head_degree.before_degree = euler_angle[1, 0]
+
             return [right_volume, left_volume]
+        else:
+            return head_degree.estimate_camera_none_head_orientation()
+

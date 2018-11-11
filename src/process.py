@@ -5,6 +5,8 @@ import sys
 import numpy as np
 import audioop
 
+from camera.head_degree import HeadDegree
+
 from audio.music import Music
 from camera.head_vector import HeadVector
 from camera.select_speakers import SelectSpeakers
@@ -78,14 +80,14 @@ def play_music(music_path, shared_music_l_volumes, shared_music_r_volumes):
 
     music.stop()
 
-def assign_speaker(shared_music_l_volumes, shared_music_r_volumes):
+def assign_speaker(shared_music_l_volumes, shared_music_r_volumes, head_degree):
     print("Run assign_speaker")
     select_speaker = init_select_speaker()
     before_frames = None
     # 顔認識
     head = HeadVector()
     while(True):
-        all_flames = select_speaker.estimate_head_orientation(0, head)
+        all_flames = select_speaker.estimate_head_orientation(0, head, head_degree)
         if all_flames is None:
             if before_frames is None:
                 # TODO: ここを決める
@@ -105,9 +107,10 @@ def assign_speaker(shared_music_l_volumes, shared_music_r_volumes):
 def start(music_path):
     l_volumes, r_volumes = np.array([1, 0, 0, 0, 0]), np.array([0, 0, 0, 1, 0])
     shared_music_l_volumes, shared_music_r_volumes = Array("f", l_volumes), Array("f", r_volumes)
+    head_degree = HeadDegree()
 
     music_process = Process(target=play_music, args=[music_path, shared_music_l_volumes, shared_music_r_volumes])
-    speaker_process = Process(target=assign_speaker, args=[shared_music_l_volumes, shared_music_r_volumes])
+    speaker_process = Process(target=assign_speaker, args=[shared_music_l_volumes, shared_music_r_volumes, head_degree])
     music_process.start()
     speaker_process.start()
     # music_process.join()
