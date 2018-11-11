@@ -57,6 +57,15 @@ class SelectSpeakers:
 
             _, euler_angle = self.get_head_pose(shape)
 
+            for (x, y) in shape:
+                    cv2.circle(frame, (x, y), 1, (0, 0, 255), -1)
+            cv2.putText(frame, "X: " + "{:7.2f}".format(euler_angle[0, 0]), (20, 20), cv2.FONT_HERSHEY_SIMPLEX,
+                        0.75, (0, 0, 255), thickness=2)
+            cv2.putText(frame, "Y: " + "{:7.2f}".format(euler_angle[1, 0]), (20, 50), cv2.FONT_HERSHEY_SIMPLEX,
+                        0.75, (0, 0, 255), thickness=2)
+            cv2.putText(frame, "Z: " + "{:7.2f}".format(euler_angle[2, 0]), (20, 80), cv2.FONT_HERSHEY_SIMPLEX,
+                        0.75, (0, 0, 255), thickness=2)
+
             head.rotate(euler_angle[0, 0], euler_angle[1, 0], euler_angle[2, 0])
             print(euler_angle[0, 0], euler_angle[1, 0], euler_angle[2, 0])
             post_face_vector('127.0.0.1', 10001, [euler_angle[0, 0], euler_angle[1, 0], euler_angle[2, 0]])
