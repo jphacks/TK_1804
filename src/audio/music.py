@@ -5,6 +5,7 @@ import wave
 import os.path
 
 CHUNK_SIZE = 1024
+MASTER_VOLUME = 0.3
 
 class Music:
 
@@ -28,9 +29,9 @@ class Music:
         self.pa.terminate()
 
     def set_6ch_audio(self, l_frames, r_frames, volumes):
-        all_frame = [ [np.fromstring(audioop.mul(l_frames, self.width, volumes[0][i]), dtype=np.int16)]
+        all_frame = [ [np.fromstring(audioop.mul(l_frames, self.width, MASTER_VOLUME * volumes[0][i]), dtype=np.int16)]
                       if volumes[0][i] != 0
-                      else [np.fromstring(audioop.mul(r_frames, self.width, volumes[1][i]), dtype=np.int16)]
+                      else [np.fromstring(audioop.mul(r_frames, self.width, MASTER_VOLUME * volumes[1][i]), dtype=np.int16)]
                       for i in range(5)]
         audio = np.concatenate(all_frame, axis=0)
         # insertの第2引数がミュートするチャンネル
