@@ -35,6 +35,6 @@ class Music:
                       for i in range(5)]
         audio = np.concatenate(all_frame, axis=0)
         # insertの第2引数がミュートするチャンネル
-        audio = np.insert(audio, 4, 0, axis=0).T.astype(np.int16).tostring()
+        audio = np.insert(audio, 5, 0, axis=0).T.astype(np.int16).tostring()
 
         return audio

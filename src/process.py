@@ -96,7 +96,7 @@ def assign_speaker(shared_music_l_volumes, shared_music_r_volumes, direction):
         elif direction.value == -1:
             l_volumes, r_volumes = np.array([0, 0, 0, 0, 0]), np.array([0, 0, 0, 0, 0])
         elif direction.value == 9:
-            l_volumes, r_volumes = np.array([1, 1, 1, 1, 1]), np.array([1, 1, 1, 1, 1])
+            l_volumes, r_volumes = np.array([1, 1, 0, 0, 0.5]), np.array([0, 0, 1, 1, 0.5])
         elif direction.value == 1:
             l_volumes, r_volumes = np.array([0, 0, 0, 0, 1]), np.array([0, 0.5, 0.5, 0, 0])
         elif direction.value == 2:
@@ -107,6 +107,16 @@ def assign_speaker(shared_music_l_volumes, shared_music_r_volumes, direction):
             l_volumes, r_volumes = np.array([0.25, 0.75, 0, 0, 0]), np.array([0, 0, 0, 0.5, 0.5])
         elif direction.value == 5:
             l_volumes, r_volumes = np.array([0, 0.5, 0.5, 0, 0]), np.array([0, 0, 0, 0, 1])
+        elif direction.value == 6:
+            l_volumes, r_volumes = np.array([1, 0, 0, 0, 0]), np.array([0, 0, 0, 0, 0])
+        elif direction.value == 7:
+            l_volumes, r_volumes = np.array([0, 1, 0, 0, 0]), np.array([0, 0, 0, 0, 0])
+        elif direction.value == 8:
+            l_volumes, r_volumes = np.array([0, 0, 0, 0, 0]), np.array([0, 0, 1, 0, 0])
+        elif direction.value == -2:
+            l_volumes, r_volumes = np.array([0, 0, 0, 0, 0]), np.array([0, 0, 0, 1, 0])
+        elif direction.value == -3:
+            l_volumes, r_volumes = np.array([0, 0, 0, 0, 0]), np.array([0, 0, 0, 0, 1])
 
 
         for i in range(5):
@@ -144,6 +154,16 @@ def start():
             direction.value = 4
         elif kb == '5':
             direction.value = 5
+        elif kb == 'z':
+            direction.value = 6
+        elif kb == 'x':
+            direction.value = 7
+        elif kb == 'c':
+            direction.value = 8
+        elif kb == 'v':
+            direction.value = -2
+        elif kb == 'b':
+            direction.value = -3
 
 if __name__ == '__main__':
     start()
