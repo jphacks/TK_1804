@@ -16,6 +16,9 @@ class SelectSpeakers:
         self.reprojectsrc = reprojectsrc
         self.line_pairs = line_pairs
         self.face_landmark_path = face_landmark_path
+        self.cap = cv2.VideoCapture(1)
+        self.detector = dlib.get_frontal_face_detector()
+        self.predictor = dlib.shape_predictor(face_landmark_path)
 
     def get_head_pose(self, shape):
         image_pts = np.float32([shape[17], shape[21], shape[22], shape[26], shape[36],
@@ -34,25 +37,19 @@ class SelectSpeakers:
 
         return reprojectdst, euler_angle
 
-    def estimate_head_orientation(self, capture_devise_num, head, head_degree):
+    def estimate_head_orientation(self, head, head_degree):
         # speakerの設定
         speaker_radians = np.array([0.0, np.deg2rad(60), np.deg2rad(120), np.deg2rad(180), np.deg2rad(270)])
-        cap = cv2.VideoCapture(capture_devise_num)
-        if not cap.isOpened():
-            print("Unable to connect to camera.")
-            return
-        detector = dlib.get_frontal_face_detector()
-        predictor = dlib.shape_predictor(self.face_landmark_path)
 
-        if not cap.isOpened():
+        if not self.cap.isOpened():
             return None
-        ret, frame = cap.read()
+        ret, frame = self.cap.read()
         if not ret:
             return [head_degree.before_volume_r, head_degree.before_volume_l]
         frame = cv2.flip(frame, -1)
-        head_rects = detector(frame, 0)
+        head_rects = self.detector(frame, 0)
         if len(head_rects) > 0:
-            shape = predictor(frame, head_rects[0])
+            shape = self.predictor(frame, head_rects[0])
             shape = face_utils.shape_to_np(shape)
 
             _, euler_angle = self.get_head_pose(shape)
@@ -81,7 +78,6 @@ class SelectSpeakers:
             cv2.flip(frame, -1)
             cv2.imshow("demo", frame)
             cv2.waitKey(1)
-
 
             return [right_volume, left_volume]
         else:

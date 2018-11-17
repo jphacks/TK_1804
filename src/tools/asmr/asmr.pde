@@ -80,11 +80,11 @@ void draw() {
   }
 
   pushMatrix();
-  
+  //rotateZ(radians(180));
   // ビューポイントの移動
   translate(width/2, height/2, 0);
   rotateX(radians(70));
-  rotateZ(radians(20));
+  rotateZ(radians(200));
   
   // x, y, z軸の直線
   stroke(0, 0, 0);
