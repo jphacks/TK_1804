@@ -57,16 +57,16 @@ def init_select_speaker():
 
     return select_speaker
 
-def play_music(music_path, shared_music_l_volumes, shared_music_r_volumes):
+def play_music(shared_music_l_volumes, shared_music_r_volumes):
     print("Run play_music")
-    music = Music(music_path)
+    music = Music()
     print("END play_music")
-    src_frames = music.wf.readframes(CHUNK_SIZE)
+    src_frames = music.stream_in.read(CHUNK_SIZE, exception_on_overflow=False)
 
     while src_frames != '':
         # バイト列を取得
         # [L0, R0, L1, R1, L2, R2, ...]
-        src_frames = music.wf.readframes(CHUNK_SIZE)
+        src_frames = music.stream_in.read(CHUNK_SIZE, exception_on_overflow=False)
         # L, Rに分割
         l_frames = audioop.tomono(src_frames, music.width, 1, 0)
         r_frames = audioop.tomono(src_frames, music.width, 0, 1)
@@ -74,9 +74,9 @@ def play_music(music_path, shared_music_l_volumes, shared_music_r_volumes):
         # 顔認識側から受け取る値
         six_ch_frames = music.set_6ch_audio(l_frames, r_frames, music.volumes)
 
-        # 6chオーディオをstreamに渡す
+        # 6chオーディオをstream_outに渡す
         # [FL0, FR0, CT0, BA0, RL0, RR0, ...]
-        music.stream.write(six_ch_frames)
+        music.stream_out.write(six_ch_frames)
 
     music.stop()
 
@@ -89,14 +89,14 @@ def assign_speaker(shared_music_l_volumes, shared_music_r_volumes, direction):
     while(True):
         # デバックモード
         if direction.value == 0:
-            all_flames, video_frames = select_speaker.estimate_head_orientation(1, head, head_degree)
+            all_flames = select_speaker.estimate_head_orientation(0, head, head_degree)
             if all_flames is not None:
                 l_volumes, r_volumes = all_flames[0], all_flames[1]
 
         elif direction.value == -1:
             l_volumes, r_volumes = np.array([0, 0, 0, 0, 0]), np.array([0, 0, 0, 0, 0])
         elif direction.value == 9:
-            l_volumes, r_volumes = np.array([1, 1, 1, 1, 1]), np.array([1, 1, 1, 1, 1])
+            l_volumes, r_volumes = np.array([1, 1, 0, 0, 0.5]), np.array([0, 0, 1, 1, 0.5])
         elif direction.value == 1:
             l_volumes, r_volumes = np.array([0, 0, 0, 0, 1]), np.array([0, 0.5, 0.5, 0, 0])
         elif direction.value == 2:
@@ -107,21 +107,28 @@ def assign_speaker(shared_music_l_volumes, shared_music_r_volumes, direction):
             l_volumes, r_volumes = np.array([0.25, 0.75, 0, 0, 0]), np.array([0, 0, 0, 0.5, 0.5])
         elif direction.value == 5:
             l_volumes, r_volumes = np.array([0, 0.5, 0.5, 0, 0]), np.array([0, 0, 0, 0, 1])
+        elif direction.value == 6:
+            l_volumes, r_volumes = np.array([1, 0, 0, 0, 0]), np.array([0, 0, 0, 0, 0])
+        elif direction.value == 7:
+            l_volumes, r_volumes = np.array([0, 1, 0, 0, 0]), np.array([0, 0, 0, 0, 0])
+        elif direction.value == 8:
+            l_volumes, r_volumes = np.array([0, 0, 0, 0, 0]), np.array([0, 0, 1, 0, 0])
+        elif direction.value == -2:
+            l_volumes, r_volumes = np.array([0, 0, 0, 0, 0]), np.array([0, 0, 0, 1, 0])
+        elif direction.value == -3:
+            l_volumes, r_volumes = np.array([0, 0, 0, 0, 0]), np.array([0, 0, 0, 0, 1])
 
 
         for i in range(5):
             shared_music_l_volumes[i], shared_music_r_volumes[i] = l_volumes[i], r_volumes[i]
-        cv2.flip(video_frames, -1)
-        cv2.imshow("demo", video_frames)
-        cv2.waitKey(1)
-
-def start(music_path):
+        
+def start():
     l_volumes, r_volumes = np.array([1, 0, 0, 0, 0]), np.array([0, 0, 0, 1, 0])
     shared_music_l_volumes, shared_music_r_volumes = Array("f", l_volumes), Array("f", r_volumes)
     # デバックモード
     direction = Value('i', 0)
 
-    music_process = Process(target=play_music, args=[music_path, shared_music_l_volumes, shared_music_r_volumes])
+    music_process = Process(target=play_music, args=[shared_music_l_volumes, shared_music_r_volumes])
     speaker_process = Process(target=assign_speaker, args=[shared_music_l_volumes, shared_music_r_volumes, direction])
     music_process.start()
     speaker_process.start()
@@ -144,8 +151,16 @@ def start(music_path):
             direction.value = 4
         elif kb == '5':
             direction.value = 5
+        elif kb == 'z':
+            direction.value = 6
+        elif kb == 'x':
+            direction.value = 7
+        elif kb == 'c':
+            direction.value = 8
+        elif kb == 'v':
+            direction.value = -2
+        elif kb == 'b':
+            direction.value = -3
 
 if __name__ == '__main__':
-    args = sys.argv
-    music_path = args[1]
-    start(music_path)
+    start()

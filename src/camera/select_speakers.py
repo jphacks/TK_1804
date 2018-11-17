@@ -48,7 +48,7 @@ class SelectSpeakers:
             return None
         ret, frame = cap.read()
         if not ret:
-            return ([head_degree.before_volume_r, head_degree.before_volume_l], frame)
+            return [head_degree.before_volume_r, head_degree.before_volume_l]
         frame = cv2.flip(frame, -1)
         head_rects = detector(frame, 0)
         if len(head_rects) > 0:
@@ -67,7 +67,7 @@ class SelectSpeakers:
                         0.75, (0, 0, 255), thickness=2)
 
             head.rotate(euler_angle[0, 0], euler_angle[1, 0], euler_angle[2, 0])
-            print(euler_angle[0, 0], euler_angle[1, 0], euler_angle[2, 0])
+            #print(euler_angle[0, 0], euler_angle[1, 0], euler_angle[2, 0])
             post_face_vector('127.0.0.1', 10001, [euler_angle[0, 0], euler_angle[1, 0], euler_angle[2, 0]])
             head.projection()
 
@@ -78,7 +78,16 @@ class SelectSpeakers:
             head_degree.before_volume_r = right_volume
             head_degree.before_volume_l = left_volume
 
-            return ([right_volume, left_volume], frame)
+            cv2.flip(frame, -1)
+            cv2.imshow("demo", frame)
+            cv2.waitKey(1)
+
+
+            return [right_volume, left_volume]
         else:
-            return (head_degree.estimate_camera_none_head_orientation(), frame)
+            cv2.flip(frame, -1)
+            cv2.imshow("demo", frame)
+            cv2.waitKey(1)
+
+            return head_degree.estimate_camera_none_head_orientation()
 
