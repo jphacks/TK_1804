@@ -120,8 +120,8 @@ def assign_speaker(shared_music_l_volumes, shared_music_r_volumes, direction):
             l_volumes, r_volumes = np.array([0, 0, 0, 0, 0]), np.array([0, 0, 0, 0, 1])
 
 
-        #for i in range(5):
-        #    shared_music_l_volumes[i], shared_music_r_volumes[i] = l_volumes[i], r_volumes[i]
+        for i in range(5):
+            shared_music_l_volumes[i], shared_music_r_volumes[i] = l_volumes[i], r_volumes[i]
 
 
 def start():
@@ -130,15 +130,10 @@ def start():
     # デバックモード
     direction = Value('i', 0)
 
-    #music_process = Process(target=play_music, args=[shared_music_l_volumes, shared_music_r_volumes])
+    music_process = Process(target=play_music, args=[shared_music_l_volumes, shared_music_r_volumes])
     speaker_process = Process(target=assign_speaker, args=[shared_music_l_volumes, shared_music_r_volumes, direction])
-    #music_process.start()
+    music_process.start()
     speaker_process.start()
-
-    select_speaker = init_select_speaker()
-    # 顔認識
-    head = HeadVector()
-    head_degree = HeadDegree()
 
     while(True):
         kb = readchar.readchar()
