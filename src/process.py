@@ -6,6 +6,7 @@ import numpy as np
 import audioop
 import cv2
 import readchar
+import dlib
 
 from camera.head_degree import HeadDegree
 
@@ -121,7 +122,8 @@ def assign_speaker(shared_music_l_volumes, shared_music_r_volumes, direction):
 
         for i in range(5):
             shared_music_l_volumes[i], shared_music_r_volumes[i] = l_volumes[i], r_volumes[i]
-        
+
+
 def start():
     l_volumes, r_volumes = np.array([1, 0, 0, 0, 0]), np.array([0, 0, 0, 1, 0])
     shared_music_l_volumes, shared_music_r_volumes = Array("f", l_volumes), Array("f", r_volumes)
@@ -129,38 +131,48 @@ def start():
     direction = Value('i', 0)
 
     music_process = Process(target=play_music, args=[shared_music_l_volumes, shared_music_r_volumes])
-    speaker_process = Process(target=assign_speaker, args=[shared_music_l_volumes, shared_music_r_volumes, direction])
+    #speaker_process = Process(target=assign_speaker, args=[shared_music_l_volumes, shared_music_r_volumes, direction])
     music_process.start()
-    speaker_process.start()
+    #speaker_process.start()
+
+    select_speaker = init_select_speaker()
+    # 顔認識
+    head = HeadVector()
+    head_degree = HeadDegree()
 
     while(True):
-        kb = readchar.readchar()
-        if kb == 'q':
-            direction.value = -1
-        elif kb == 's':
-            direction.value = 0
-        elif kb == 'a':
-            direction.value = 9
-        elif kb == '1':
-            direction.value = 1
-        elif kb == '2':
-            direction.value = 2
-        elif kb == '3':
-            direction.value = 3
-        elif kb == '4':
-            direction.value = 4
-        elif kb == '5':
-            direction.value = 5
-        elif kb == 'z':
-            direction.value = 6
-        elif kb == 'x':
-            direction.value = 7
-        elif kb == 'c':
-            direction.value = 8
-        elif kb == 'v':
-            direction.value = -2
-        elif kb == 'b':
-            direction.value = -3
+        # デバックモード
+        if direction.value == 0:
+            all_flames = select_speaker.estimate_head_orientation(head, head_degree)
+            if all_flames is not None:
+                l_volumes, r_volumes = all_flames[0], all_flames[1]
 
+        elif direction.value == -1:
+            l_volumes, r_volumes = np.array([0, 0, 0, 0, 0]), np.array([0, 0, 0, 0, 0])
+        elif direction.value == 9:
+            l_volumes, r_volumes = np.array([1, 1, 0, 0, 0.5]), np.array([0, 0, 1, 1, 0.5])
+        elif direction.value == 1:
+            l_volumes, r_volumes = np.array([0, 0, 0, 0, 1]), np.array([0, 0.5, 0.5, 0, 0])
+        elif direction.value == 2:
+            l_volumes, r_volumes = np.array([0.5, 0, 0, 0, 0.5]), np.array([0, 0, 0.75, 0.25, 0])
+        elif direction.value == 3:
+            l_volumes, r_volumes = np.array([1, 0, 0, 0, 0]), np.array([0, 0, 0, 1, 0])
+        elif direction.value == 4:
+            l_volumes, r_volumes = np.array([0.25, 0.75, 0, 0, 0]), np.array([0, 0, 0, 0.5, 0.5])
+        elif direction.value == 5:
+            l_volumes, r_volumes = np.array([0, 0.5, 0.5, 0, 0]), np.array([0, 0, 0, 0, 1])
+        elif direction.value == 6:
+            l_volumes, r_volumes = np.array([1, 0, 0, 0, 0]), np.array([0, 0, 0, 0, 0])
+        elif direction.value == 7:
+            l_volumes, r_volumes = np.array([0, 1, 0, 0, 0]), np.array([0, 0, 0, 0, 0])
+        elif direction.value == 8:
+            l_volumes, r_volumes = np.array([0, 0, 0, 0, 0]), np.array([0, 0, 1, 0, 0])
+        elif direction.value == -2:
+            l_volumes, r_volumes = np.array([0, 0, 0, 0, 0]), np.array([0, 0, 0, 1, 0])
+        elif direction.value == -3:
+            l_volumes, r_volumes = np.array([0, 0, 0, 0, 0]), np.array([0, 0, 0, 0, 1])
+
+        for i in range(5):
+            shared_music_l_volumes[i], shared_music_r_volumes[i] = l_volumes[i], r_volumes[i]
 if __name__ == '__main__':
     start()
