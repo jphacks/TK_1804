@@ -6,6 +6,7 @@ from imutils import face_utils
 from camera.head_vector import HeadVector
 from camera.utils import setting_volumes
 from camera.utils import post_face_vector
+from time import sleep
 
 class SelectSpeakers:
 
@@ -63,7 +64,7 @@ class SelectSpeakers:
             cv2.putText(frame, "Z: " + "{:7.2f}".format(euler_angle[2, 0]), (20, 80), cv2.FONT_HERSHEY_SIMPLEX,
                         0.75, (0, 0, 255), thickness=2)
 
-            head.rotate(euler_angle[0, 0], euler_angle[1, 0], euler_angle[2, 0])
+            head.rotate(np.deg2rad(euler_angle[0, 0]), np.deg2rad(euler_angle[1, 0]), np.deg2rad(euler_angle[2, 0]))
             #print(euler_angle[0, 0], euler_angle[1, 0], euler_angle[2, 0])
             post_face_vector('127.0.0.1', 10001, [euler_angle[0, 0], euler_angle[1, 0], euler_angle[2, 0]])
             head.projection()
