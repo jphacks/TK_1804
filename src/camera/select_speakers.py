@@ -79,9 +79,7 @@ class SelectSpeakers:
             cv2.flip(frame, -1)
             cv2.imshow("demo", frame)
             cv2.waitKey(1)
-            sleep(0.5)
-            #print([right_volume, left_volume])
-            print('                         ')
+
             return [right_volume, left_volume]
         else:
             cv2.flip(frame, -1)
