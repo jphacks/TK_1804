@@ -63,10 +63,9 @@ void draw() {
         String whatClientSaid = client.readString();
         if (whatClientSaid != null) {
           json = parseJSONObject(whatClientSaid);
-          pv.z = json.getFloat("x");  
-          pv.y = json.getFloat("y");  
-          pv.x = json.getFloat("z");  
-          println(pv.x + ":" + pv.y + ":" + pv.z);  
+          pv.x = json.getFloat("x");
+          pv.y = json.getFloat("y");
+          pv.z = json.getFloat("z"); 
         }  
       }
   } catch(NullPointerException e) {  
@@ -84,7 +83,7 @@ void draw() {
   // ビューポイントの移動
   translate(width/2, height/2, 0);
   rotateX(radians(70));
-  rotateZ(radians(200));
+  rotateZ(radians(20));
   
   // x, y, z軸の直線
   stroke(0, 0, 0);
@@ -192,9 +191,9 @@ class InputVector {
   
   public void setVectorSize(float size) {
     float vectorSize = this.vectorSize();
-    this.x = this.x / vectorSize * size;
-    this.y = this.y / vectorSize * size;
-    this.z = this.z / vectorSize * size;
+    this.x = (this.x / vectorSize) * size;
+    this.y = (this.y / vectorSize) * size;
+    this.z = (this.z / vectorSize) * size;
   }
   
   public void moveHead(float _x, float _y, float _z) {
@@ -237,23 +236,14 @@ class ProjectionVector extends InputVector {
   }
   
   public void projection(float size) {
-    float parametor = sqrt(1-pow(y/this.vectorSize(), 2));
-    this.c_p_x = this.x * parametor;
-    this.c_p_z = this.z * parametor;
-    
-    if (this.b_p_x != this.c_p_x || this.b_p_z != this.c_p_z) {
-      float theta = getDiffTheta();
-      if (abs(theta) > this.threthold) {
-        this.c_p_x = this.b_p_x * cos(theta) - this.b_p_z * sin(theta);
-        this.c_p_z = this.b_p_x * sin(theta) + this.b_p_z * cos(theta);
-      }
-      this.b_p_x = this.c_p_x;
-      this.b_p_z = this.c_p_z;
-    }
+    //float parametor = sqrt(1-pow(y/this.vectorSize(), 2));
+    this.c_p_x = this.x;
+    this.c_p_z = this.z;
 
     float vectorSize = ProjectionVectorSize(this.c_p_x, this.c_p_z);
     this.c_p_x = this.c_p_x / vectorSize * size;
     this.c_p_z = this.c_p_z / vectorSize * size;
+ 
   }
   
   public float ProjectionVectorSize(float x, float z) {
