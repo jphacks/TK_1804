@@ -11,7 +11,7 @@ class HeadVector:
         self.before_face_vector = np.array([0, 1])
         self.right_ear_vector = np.array([1, 0, 0])
         self.left_ear_vector = np.array([-1, 0, 0])
-        self.threthold = np.deg2rad(5)
+        self.threthold = np.deg2rad(15)
 
 
     def rotate(self, change_angel_x, change_angel_y, change_angel_z):

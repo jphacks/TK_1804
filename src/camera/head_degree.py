@@ -34,8 +34,7 @@ class HeadDegree:
             right_volume[1] = 0.3
             right_volume[2] = 0.7
         
-        else:
-            right_volume = cp.deepcopy(self.before_volume_r)
-            left_volume = cp.deepcopy(self.before_volume_l)
+        right_volume = cp.deepcopy(self.before_volume_r)
+        left_volume = cp.deepcopy(self.before_volume_l)
 
         return [right_volume, left_volume]
