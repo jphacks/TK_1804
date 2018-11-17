@@ -54,6 +54,7 @@ class HeadVector:
         self.right_ear_vector = np.array([self.current_face_vector[1], -1 * self.current_face_vector[0]])
         self.left_ear_vector = np.array([-1 * self.current_face_vector[1], self.current_face_vector[0]])
 
-        post_face_vector('127.0.0.1', 10001, [0, self.current_face_vector[0], self.current_face_vector[1]])
-
         print(self.current_face_vector)
+
+        post_face_vector('127.0.0.1', 10001, [self.face_vector[1], 0 , self.face_vector[2]])
+

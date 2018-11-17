@@ -194,8 +194,6 @@ class InputVector {
     this.x = (this.x / vectorSize) * size;
     this.y = (this.y / vectorSize) * size;
     this.z = (this.z / vectorSize) * size;
-    
-    println(this.x + ":" + this.y + ":" + this.z); 
   }
   
   public void moveHead(float _x, float _y, float _z) {
